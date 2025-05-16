@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique(map: "UserData_email_key")
+  password String
+  employee Employee ?
+}
+
+
+model Employee {
+  id Int  @id @default(autoincrement())
+  userId Int @unique
+  user User @relation(fields:[userId], references:[id])
+  basicSalary Float
+  hra Float
+  allowances Float
+  deductions Float
+  pf Float
+  attendance Attandance[]
+  salaries Salary[]
+}
+
+model Attandance {
+  id Int  @id @default(autoincrement())
+  employee Employee @relation(fields:[employeeId], references:[id])
+  employeeId Int
+  date DateTime
+  hoursWorked Float
+}
+
+model Salary {
+  id Int  @id @default(autoincrement())
+  employee Employee @relation(fields:[employeeId], references:[id])
+  employeeId Int
+  month String
+  grossSalary String
+  tax Float
+  pf Float
+  netSalary Float
+}
